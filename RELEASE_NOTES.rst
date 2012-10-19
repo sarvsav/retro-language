@@ -2,39 +2,149 @@
 Release Notes
 =============
 
+----------
+Retro 11.5
+----------
+
+core language / standard image
+==============================
+
+  - clean ups and refactorings
+
+    - increased use of & prefix over [ ]
+
+  - new functions
+
+    - yield
+    - d->doc
+
+  - moved functions to internal' vocabulary
+
+    - quote
+    - string
+
+libraries
+=========
+
+  - dissect' now tries to display function names for calls
+
+examples
+========
+
+  - autopsy
+
+    - added words:vectored
+    - added words:byClass
+    - use latest dissect'
+
+  - block editor
+
+    - fixed a few issues causing corruption (thanks to docl finding the bugs)
+
 
 ----------
 Retro 11.4
 ----------
+
+Compatibility Issues
+====================
+
+This release brings several changes that may require small alterations to
+existing source code.
+
+First, the **files'** vocabulary is now in the library and not the core
+language. For most users, adding a single line to the start of their sources
+will be sufficient.
+
+::
+
+  needs files'
+
+The second change is more significant. We have moved **pow**, **abs**, **min**,
+**max**, and **random** to the **math'** library. If you have source using these,
+you need to add the following to your sources:
+
+::
+
+  needs math'
+  with  math'
+
+If you don't want to do **with math'**, you can add a **^math'** prefix to each
+use of these functions and just use the **needs math'** line.
+
+Third, hidden headers are no longer preserved. There is a new function, **HEADERS**,
+which returns the maximum number of hidden headers. Exceeding this will cause
+problems, so it can be revectored to increase (or decrease) as needed.
+
+Fourth, the **tib**, temporary string buffers, and hidden headers are now moved
+to the end of physical memory. Use the **introspection'** library to determine
+the size and actual locations of these buffers, and avoid overflowing into them.
+E.g., in **casket'**, we use **^introspection'startOfBuffers** to identify the
+start of the buffers and dynamically shift the casket buffers to a safe location.
+
+Fifth, string constants are now created using **string:** instead of **string**.
+This requires a quick search/replace to fix.
 
 
 core language / standard image
 ==============================
 
   - clean ups and refactorings
-    - {{ and }}
-    - :is and :devector
-    - each@
-    - <puts>
+
+    - **{{** and **}}**
+    - **:is** and **:devector**
+    - **each@**
+    - **<puts>**
+    - **toNumber**
+
+  - removals (now in library)
+
+    - **pow**
+    - **abs**
+    - **min**
+    - **max**
+    - **random**
+    - **files'**
+
+  - new memory layout (buffers at physical end of memory)
+  - hidden headers now disappear when global scope resumes
+  - helper function **string** for strings
 
 
 libraries
 =========
 
-  - d' renamed to decimal' (resolve naming conflict)
-  - add queries'
-  - add dump'
-  - add fixed'
-  - add double'
-  - add unsigned'
-  - add introspection'
+  - **d'** renamed to **decimal'** (resolve naming conflict)
+  - add **queries'**
+  - add **dump'**
+  - add **fixed'**
+  - add **double'**
+  - add **unsigned'**
+  - add **introspection'**
+  - add **files'** (used to be in core image)
+  - update **math'**
 
+    - add **pow** (used to be in core image)
+    - add **abs** (used to be in core image)
+    - add **min** (used to be in core image)
+    - add **max** (used to be in core image)
+    - add **random** (used to be in core image)
+
+  - updated **console'** to use new console device with VT100 fallback
+
+
+examples
+========
+
+  - cleanups to make better use of higher-level language features
 
 vm
 ==
 
   - add retro-curses
-
+  - C# is now feature complete
+  - added support for VM-level console device
+  - new java implementation from Mike Andrews
 
 website
 =======

@@ -1,0 +1,4 @@
+[ "<link href='http://kevinburke.bitbucket.org/markdowncss/markdown.css' rel='stylesheet'></link>" puts
+  [ dup '< == [ drop "&lt;" puts ] [ dup '> == [ drop "&gt;" puts ] [ default: putc ] if ] if ] &putc :is
+  last [ cr dup d->name "# %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@ bye ] is boot
+save bye

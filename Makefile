@@ -25,6 +25,15 @@ image: retro
 	./retro --shrink --image retroImage --with core.rx
 	rm core.rx
 
+helpful: image
+	./retro --image retroImage --with image/helpful.rx
+
+docstrings: helpful
+	cp retroImage helpImage
+	./retro --image helpImage --with tools/exportDocstrings.rx
+	./retro --image helpImage >doc/Function_List.md
+	rm helpImage
+
 jsimage:
 	./retro --with vm/web/html5/dumpImage.rx
 	cp retroImage.js vm/web/android-phonegap/assets/www
