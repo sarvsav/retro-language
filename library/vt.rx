@@ -1,8 +1,6 @@
 ( ~~ extended virtual terminal support [ fancy colors, etc ] ~~~~~~~~ )
 ( Copyright [c] 2012 Michal J Wallace                                 )
 
-( Sorry for the poor retro style. I only knew ngaro when I wrote it. )
-
 chain: vt'
 
 ( -- low level io stuff -- )
@@ -31,7 +29,6 @@ variables| vt:fgc vt:bgc |
 : |m 5 vt:lo vt:fg ;  : |M |m vt:hi ; ( magenta )
 : |c 6 vt:lo vt:fg ;  : |C |c vt:hi ; ( cyan )
 : |w 7 vt:lo vt:fg ;  : |W |w vt:hi ; ( light gray / white )
-
 
 : vt:colors
   |k "|k " puts |r "|r " puts |g "|g " puts |y "|y " puts

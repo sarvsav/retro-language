@@ -9,6 +9,11 @@ Retro 11.5
 core language / standard image
 ==============================
 
+  - metacompiler changes
+
+    - docstring support
+    - create headers during metacompilation
+
   - clean ups and refactorings
 
     - increased use of & prefix over [ ]

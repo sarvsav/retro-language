@@ -6,10 +6,10 @@
 ( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 
 ( Assembler and Metacompiler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
-3 1024 * constant IMAGE-SIZE
+36 1024 * constant IMAGE-SIZE
 
 ( Assembler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
-variables| target origin 'WORD 'MACRO 'DATA 'PRIM link chain |
+variables| target origin 'WORD 'MACRO 'DATA 'PRIM link chain latest |
 here [ !target ] [ !origin ] bi IMAGE-SIZE allot
 
 : m,  ( n-  ) @target !+ !target ;
@@ -41,8 +41,13 @@ here [ !target ] [ !origin ] bi IMAGE-SIZE allot
                       t-here @origin 6 + ! t-here @origin 3 + ! ;
 
 ( Metacompiler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
-: t: ( "- ) label: nop, nop, &m, reclass ;
-: i: ( "- ) label: &m, reclass ;
+
+{{
+  : <self-compile>  &m, reclass ;
+---reveal---
+  : t: ( "- ) label: <self-compile> nop, nop, ;
+  : i: ( "- ) label: <self-compile> ;
+}}
 
 {{
   : cond ( -a ) @target 0 m, ;
@@ -61,11 +66,22 @@ here [ !target ] [ !origin ] bi IMAGE-SIZE allot
 : variable: ( n"- ) label: m, ;
 : variable  (  "- ) 0 variable: ;
 : elements  ( n"- ) &variable times ;
-: entry     ( a"- ) t-here @link m, !link m, m, 0 m, getToken $, ;
+: entry     ( a"- ) t-here dup !latest @link m, !link m, m, 0 m, getToken $, ;
 : word:     ( a"- ) @'WORD  entry ;
-: macro:    ( a"- ) @'MACRO entry ;
 : data:     ( a"- ) @'DATA  entry ;
-: prim:     ( a"- ) @'PRIM  entry ;
+
+: w:        ( ""- )
+  t-here dup !latest @link m, !link @'WORD m, t-here 0 m, 0 m, getToken $, t-here swap @origin + ! t: ;
+
+: p:        ( ""- )
+  t-here dup !latest @link m, !link @'PRIM m, t-here 0 m, 0 m, getToken $, t-here swap @origin + ! t: ;
+
+: m:        ( ""- )
+  t-here dup !latest @link m, !link @'MACRO m, t-here 0 m, 0 m, getToken $, t-here swap @origin + ! t: ;
+
+: :doc
+  t-here [ $, ] dip @latest @origin + 3 + ! ;
+
 : patch     (   - ) @link [ @chain ! ] [ "\nLast header at %d" puts ] bi ;
 : mark      (   - ) @target !chain ;
 : setClass  ( aa- ) ! ;

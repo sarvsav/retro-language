@@ -18,12 +18,16 @@ variable needle
   [ d->name dup @needle ^strings'search [ puts space ] [ drop ] if ]
   ^types'LIST each@ ;
 ---reveal---
-: matching getToken showmatching ;
-  "( `` ) parse for token and show all words containing it" :doc
-: see ' [ decompile dup 1- ^dissect'endOfWord? not ] while drop ;
-  "( ``- ) parse for word and show the raw instructions " :doc
-: chains  last [ dup @d->class &.chain == [ d->name puts space ] [ drop ] if ] ^types'LIST each@ ;   ( TODO : "chains" should show ONLY the chains )
-  "( - ) show all words containing ' (should be mostly chains)" :doc
+: matching "( `` ) parse for token and show all words containing it" :doc
+  getToken showmatching ;
+
+: see "( ``- ) parse for word and show the raw instructions " :doc
+  [ decompile dup 1- ^dissect'endOfWord? not ] while drop ;
+  
+: chains "( - ) show all words containing ' (should be mostly chains)" :doc
+  last [ dup @d->class &.chain == [ d->name puts space ] [ drop ] if ]
+  ^types'LIST each@ ;   ( TODO : "chains" should show ONLY the chains )
+  
 : chwords
    ' dup xt->d @d->class &.chain ==
      [ .chain words "%%" find drop @d->xt do ]
