@@ -13,9 +13,9 @@ variable assertionFlag
 : assert      ( f-  )  @assertionFlag and !assertionFlag ;
 : available   ( n-f )  1+ depth <= dup assert ;
 
-: assert=     2 available [ = assert ]   ifTrue ;
-: assertFalse 1 available [ 0 = assert ] ifTrue ;
-: assertTrue  1 available [ 0 = not assert ] ifTrue ;
+: assert=     2 available [ == assert ]   ifTrue ;
+: assertFalse 1 available [ 0 == assert ] ifTrue ;
+: assertTrue  1 available [ 0 == not assert ] ifTrue ;
 : assert>     2 available [ > assert ]   ifTrue ;
 : assert>=    2 available [ >= assert ]  ifTrue ;
 : assert<     2 available [ < assert ]   ifTrue ;

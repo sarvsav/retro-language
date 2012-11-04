@@ -910,7 +910,7 @@ search the dictionary for it, and call "process" to handle it. Then repeat,
 forever. (Or until "bye" is called)
 
 Now we're nearly done the second stage. We still need build the initial
-dictinary:
+dictionary:
 
   ' 1+           word: 1+            ' 1-           word: 1-
   ' swap         word: swap          ' drop         word: drop

@@ -4,7 +4,7 @@ chain: char'
   : isUpper?       ( c-f )  'A 'Z within ;
   : isLower?       ( c-f )  'a 'z within ;
   : isNumeric?     ( c-f )  '0 '9 within ;
-  : isWhitespace?  ( c-f )  [ 32 = ] [ 9 = ] [ [ 10 = ] [ 13 = ] bi or ] tri 2or ;
+  : isWhitespace?  ( c-f )  [ 32 == ] [ 9 == ] [ [ 10 == ] [ 13 == ] bi or ] tri 2or ;
   : toUpper        ( c-c )  dup isUpper? if; dup isNumeric? if; 32 - ;
   : toLower        ( c-c )  dup isLower? if; dup isNumeric? if; 32 + ;
   : toString       ( c-$ )  " " [ ! ] sip tempString ;

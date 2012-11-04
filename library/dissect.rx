@@ -6,7 +6,7 @@
 chain: dissect'
 {{
   : case
-    [ over = ] dip swap
+    [ over == ] dip swap
     [ nip do -1 ] [ drop 0 ] if 0; pop drop ;
 ---reveal---
   : lookupOpcode ( n-$ff )
@@ -26,7 +26,8 @@ chain: dissect'
     26 [ "1+    "  0 ] case    27 [ "1-    "  0 ] case
     28 [ "in    "  0 ] case    29 [ "out   "  0 ] case
     30 [ "wait  "  0 ] case
-    toString 0 0 ;
+    [ toString "     " ^strings'append ] sip
+    xt->d ?dup [ d->name " ( " ^strings'prepend " )" ^strings'append ^strings'append ] ifTrue 0 0 ;
 }}
 
 {{
@@ -40,7 +41,7 @@ chain: dissect'
     dup !this @ instr [ following ^strings'append ] ifTrue @this swap ;
 }}
 
-: endOfWord? ( a-f ) @+ swap @ [ 9 = ] bi@ and ;
+: endOfWord? ( a-f ) @+ swap @ [ 9 == ] bi@ and ;
 ;chain
 
 doc{

@@ -160,8 +160,6 @@ look at how it works:
 
 ::
 
-  : scale ( x-y ) a @ * ;
-  a ?
   1000 variable: a
   : scale ( x-y ) a @ * ;
   3 scale putn
@@ -506,7 +504,7 @@ a new string starting with the first and ending with the second.
 
   "hello,"  " world!" ^strings'append puts
 
-A varient exists for placing the second string first. This is
+A variant exists for placing the second string first. This is
 **^strings'prepend**.
 
 ::

@@ -251,7 +251,10 @@
         ((-13) (setf (aref *ports* 5) +cell-size+))
         ((-14) (setf (aref *ports* 5)
                      #+big-endian 1
-                     #-big-endian 0))))))
+                     #-big-endian 0))
+        ((-15) (setf (aref *ports* 5) 0))
+        ((-16) (setf (aref *ports* 5) *stack-depth*))
+        ((-17) (setf (aref *ports* 5) *addresses-depth*))))))
 
 (defun ngaro ()
   (console-prepare)

@@ -1,34 +1,43 @@
 ( Autopsy ------------------------------------------------------------------- )
-( Copyright [c] 2010 - 2011, Charles Childers                                 )
+( Copyright [c] 2010 - 2012, Charles Childers                                 )
 ( Copyright [c] 2011, Marc Simpson                                            )
 ( License: ISC                                                                )
 ( --------------------------------------------------------------------------- )
+
 needs dissect'
+needs files'
 
 chain: autopsy'
+
+: words:vectored  ( - )
+  cr last [ dup @d->xt @ #8 == [ d->name puts space ] [ drop ] if ] ^types'LIST each@ ;
+
+: words:byClass  ( class - )
+  cr last [ over over @d->class == [ d->name puts space ] [ drop ] if ] ^types'LIST each@ drop ;
 
 ( --[ source decompiler ]---------------------------------------------------- )
 {{
   variable qdepth
 
   : resolveName  ( a-a )
-    dup @ xt->d dup [ d->name ] [ drop dup putn " do" ] if puts space 1+ ;
+    dup @ xt->d ?dup [ d->name ] [ dup putn " do" ] if puts space 1+ ;
 
   : dumpString  ( a-a )
     '" putc [ repeat @+ 0; putc again ] do '" putc space ;
 
-  : string?  ( a-af )
-    dup @ 1- @ 0 = ;
+  "quote" &internals' findInChain drop @d->xt constant QUOTE
+  "string" &internals' findInChain drop @d->xt constant STRING
 
   : decompile  ( a-a )
     dup @
     [ 0 = ] [ 1+ ] whend
     [ 1 = ] [ 1+ dup @ putn space 1+ ] whend
-    [ 8 = ] [ 1+ string? [ 1+ dumpString 2 + ] [ dup @ "jump: %d " puts 1+ ] if ] whend
+    [ 8 = ] [ 1+ dup @ "jump: %d " puts 1+ ] whend
     [ 9 = ] [ 1+ @qdepth [ "] " qdepth -- ] [ "; " ] if puts ] whend
-    [ &quote  = ] [ qdepth ++ 2 + "[ " puts ] whend
+    [ QUOTE = ] [ qdepth ++ 2 + "[ " puts ] whend
+    [ STRING = ] [ 1+ dumpString 2 + ] whend
     [ 0 31 within not ] [ resolveName ] whend
-    [ &quote <> ] [ ^dissect'decompile ^strings'trimRight "%s " puts ] whend
+    [ QUOTE <> ] [ ^dissect'decompile ^strings'trimRight "%s " puts ] whend
     drop ;
 ---reveal---
   : viewSource  ( a- )
@@ -58,7 +67,7 @@ chain: autopsy'
   : .boxedn   ( n-  )   '| putc space .number space '| putc ;
   : .empty    (  -  )   '| putc -2 .pad '| putc ;
 
-  : xt->name  ( $-$ )   toNumber xt->d dup [ d->name ] [ drop "" ] if ;
+  : xt->name  ( $-$ )   toNumber xt->d ?dup [ d->name ] [ "" ] if ;
 
   variable escCell
   : lookup    ( a-$ )
@@ -558,4 +567,19 @@ Functions
 | runtime  | q-    | Display the number of seconds   |
 |          |       | needed to run a function        |
 +----------+-------+---------------------------------+
+
+
+Listing Functions
+=================
+
++----------------+---------+---------------------------------+
+| Function       | Stack   | Notes                           |
++================+=========+=================================+
+| words:vectored | ``-``   | Display all functions that have |
+|                |         | been revectored                 |
++----------------+---------+---------------------------------+
+| words:byClass  | class - | Display all functions with a    |
+|                |         | specific class                  |
++----------------+---------+---------------------------------+
+
 }doc

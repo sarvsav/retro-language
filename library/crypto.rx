@@ -23,7 +23,7 @@ chain: crypto'
     'q , 'r , 's , 't , 'u ,
 
   : getIndex  ( c-n )
-    tapCodes [ [ @ over <> ] sip 1+ swap ] while nip tapCodes - ;
+    tapCodes [ [ @ over != ] sip 1+ swap ] while nip tapCodes - ;
 
   : encrypt  ( c-cr )
     [  6 < ] [ 1 swap ] when
@@ -90,7 +90,7 @@ chain: crypto'
     'a - keystream + @ ;
 
   : getIndex  ( c-n )
-    keystream [ [ @ over <> ] sip 1+ swap ] while nip keystream - ;
+    keystream [ [ @ over != ] sip 1+ swap ] while nip keystream - ;
 
   : decode  ( c-c )
     getIndex alphabet + @ ;

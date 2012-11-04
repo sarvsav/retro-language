@@ -178,6 +178,8 @@ r/o r/w + w/o + constant r/a
             -6 of rsp @ rs - cell/          endof
             -8 of time&date get-unix-time   endof
             -9 of image-size ip ! 0         endof
+            -16 of stack-size               endof
+            -17 of stack-size               endof
             0 swap ( default )
           endcase ]port ;
 5 register: vm-info

@@ -128,6 +128,8 @@ let devices () =
                 0
             | -11 -> Console.WindowWidth
             | -12 -> Console.WindowHeight
+            | -16 -> 128
+            | -17 -> 1024
             | _ -> 0
 
 let rec exec () =

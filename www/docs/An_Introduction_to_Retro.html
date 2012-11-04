@@ -131,8 +131,6 @@ active.</em></p>
 global environment.</em> This can be difficult to explain, so let's take a quick
 look at how it works:</p>
 <pre class="literal-block">
-: scale ( x-y ) a &#64; * ;
-a ?
 1000 variable: a
 : scale ( x-y ) a &#64; * ;
 3 scale putn
@@ -441,7 +439,7 @@ a new string starting with the first and ending with the second.</p>
 <pre class="literal-block">
 &quot;hello,&quot;  &quot; world!&quot; ^strings'append puts
 </pre>
-<p>A varient exists for placing the second string first. This is
+<p>A variant exists for placing the second string first. This is
 <strong>^strings'prepend</strong>.</p>
 <pre class="literal-block">
 : sayHelloTo ( $- ) &quot;hello, &quot; ^strings'prepend puts cr ;

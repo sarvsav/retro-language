@@ -804,7 +804,7 @@ str_ended:
 	jmp env_end
 env_not_found:
 	movl data(,%edi,4), %ecx
- 	movb $0, memory(,%ecx,4)
+	movb $0, memory(,%ecx,4)
 env_end:
 	movl %edx, %esp
 	decl %edi
@@ -821,13 +821,43 @@ port5_11: ## Window width
 	jmp no_port
 
 port5_12: ## Window height
-	cmpl $-11, %eax
-	jne port5_end
+	cmpl $-12, %eax
+	jne port5_13
 	call get_window_size
 	xorl %eax, %eax
 	movw winsize+2, %ax
 	set_port 5 %eax
 	jmp no_port
+
+port5_13: ## bits per cell 
+        cmpl $-13, %eax
+        jne port5_14
+	set_port 5 $32
+	jmp no_port
+
+port5_14: ## endian
+	cmpl $-14, %eax
+	jne port5_15
+	set_port 5 $0
+	jmp no_port
+
+port5_15: ## console device
+	cmpl $-15, %eax
+	jne port5_16
+	set_port 5 $0
+	jmp no_port
+
+port5_16: ## data stack max depth
+        cmpl $-16, %eax
+        jne port5_17
+        set_port 5 $128
+        jmp no_port
+
+port5_17: ## address stack max depth
+        cmpl $-17, %eax
+        jne port5_end
+        set_port 5 $1024
+        jmp no_port
 
 port5_end:
 	set_port 5 $0

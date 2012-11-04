@@ -9,6 +9,7 @@
 ( Adapted from retro.fs                                                       )
 ( ~~~~~~~~~~~~~~~~~~~~~ Copyright [c] 2011, Charles Childers and Marc Simpson )
 
+needs files'
 
 ( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 ( Our Data Structures                                                         )
@@ -119,6 +120,8 @@ variable fid
   [  -8 = ] [ time                 ] whend
   [  -9 = ] [ 32768 !ip 0          ] whend
   [ -10 = ] [ &>image bi@ getEnv 0 ] whend
+  [ -16 = ] [ 128                  ] whend
+  [ -17 = ] [ 1024                 ] whend
   drop 0 ( default ) ;
 
 : vm-info port[ query ]port ;

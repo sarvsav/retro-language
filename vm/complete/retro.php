@@ -295,6 +295,14 @@ function rxHandleDevices (&$ip, &$stack, &$address,
     case -12: // console height
         $ports [5] = 0;
         break;
+
+    case -16: // max depth data stack
+        $ports [5] = 128;
+        break
+
+    case -17: // max depth address stack
+        $ports [5] = 1024;
+        break
     }
 
     return $ip;

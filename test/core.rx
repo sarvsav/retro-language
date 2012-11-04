@@ -299,6 +299,12 @@ TEST: d->name
   d' words [ d->name "words" compare ] expected: { -1 }
 results
 
+TEST: d->doc
+  create foo
+  100 @last !d->doc
+  [ &foo xt->d d->doc @ ] expected: { 100 }
+results
+
 IO: boot
 
 TEST: toNumber
@@ -443,11 +449,6 @@ TEST: (
   [ 1 ( 2 ) 3 ] expected: { 3 1 }
 results
 
-TEST: quote
-  testedWith: [
-  testedWith: ]
-results
-
 TEST: [
   testedWith: --implicit--
 results
@@ -527,6 +528,12 @@ TEST: build
 results
 
 IO: tabAsWhitespace
+
+TEST: ?dup
+  [ -1 ?dup ] expected: { -1 -1 }
+  [  0 ?dup depth ] expected: { 1 0 }
+  [  1 ?dup depth ] expected: { 2 1 1 }
+results
 
 TEST: nip
   [ 1 2 3 nip ] expected: { 3 1 }
@@ -880,9 +887,9 @@ TEST: constant
   [ foo ] expected: { 10 }
 results
 
-TEST: string
-  "Hello" string HELLO
-  "World" string WORLD
+TEST: string:
+  "Hello" string: HELLO
+  "World" string: WORLD
   [ HELLO WORLD compare ] expected: { 0 }
   [ HELLO HELLO compare ] expected: { -1 }
 results
@@ -968,7 +975,7 @@ TEST: dicts
   [ global @dicts ] expected: { 0 }
   with buffer'
   [ @dicts ] expected: { 1 }
-  global with| strings' files' |
+  global with| strings' types' |
   [ @dicts ] expected: { 2 }
   global
 results
@@ -1040,6 +1047,7 @@ results
 
 IO: STRING-LENGTH
 IO: STRING-BUFFERS
+IO: HEADERS
 
 TEST: tempString
   [ "100" dup tempString over over < [ compare ] dip and ] expected: { -1 }
@@ -1085,6 +1093,11 @@ TEST: later
   [ b ] expected: { 2 4 1 3 }
 results
 
+TEST: yield
+  : a 1 yield 2 yield 3 ;
+  [ a a a ] expected: { 3 2 1 }
+results
+
 TEST: doc{
   : a 100 ;
 doc{ : a 200 ; }doc
@@ -1095,6 +1108,7 @@ TEST: __^
   testedWith: chain:
 results
 
+IO: :needs
 IO: needs
 
 TEST: variables|
@@ -1104,30 +1118,6 @@ TEST: variables|
   300 !c
   400 !d
   [ @a @b @c @d ] expected: { 400 300 200 100 }
-results
-
-TEST: pow
-  [ 2 3 pow ] expected: { 8 }
-  [ 3 2 pow ] expected: { 9 }
-results
-
-TEST: abs
-  [ -1 abs ] expected: { 1 }
-  [  1 abs ] expected: { 1 }
-results
-
-TEST: min
-  [  1 10 min ] expected: { 1 }
-  [ 91 10 min ] expected: { 10 }
-results
-
-TEST: max
-  [  1 10 max ] expected: { 10 }
-  [ 91 10 max ] expected: { 91 }
-results
-
-TEST: random
-  [ random random = ] expected: { 0 }
 results
 
 summary

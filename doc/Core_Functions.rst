@@ -104,6 +104,8 @@ Global
 | !+              |   ca-a    |  Store a value to an address, return next     |
 |                 |           |  address                                      |
 +-----------------+-----------+-----------------------------------------------+
+| string          |     -     |  Helper function for strings                  |
++-----------------+-----------+-----------------------------------------------+
 | keepString      |    a-a    |  Move the string to a permanent location      |
 +-----------------+-----------+-----------------------------------------------+
 | getLength       |    a-n    |  Return the length of a string                |
@@ -126,6 +128,10 @@ Global
 | d->xt           |    a-a    |  Given a dictionary header, return the address|
 |                 |           |  of the function start ("xt"). Use **@** to   |
 |                 |           |  get the actual xt.                           |
++-----------------+-----------+-----------------------------------------------+
+| d->doc          |    a-a    |  Given a dictionary header, return the address|
+|                 |           |  of a documentation string. Use **@** to get  |
+|                 |           |  the actual pointer.                          |
 +-----------------+-----------+-----------------------------------------------+
 | d->name         |    a-a    |  Given a dictionary header, return the address|
 |                 |           |  of the name. This is the actual start of the |
@@ -261,6 +267,9 @@ Global
 +-----------------+-----------+-----------------------------------------------+
 | tabAsWhitespace |     -a    |  Variable; treat tab as whitespace?           |
 +-----------------+-----------+-----------------------------------------------+
+| ?dup            | | n-n     |  Duplicate TOS if non-zero. If zero, leave    |
+|                 | | n-nn    |  alone                                        |
++-----------------+-----------+-----------------------------------------------+
 | nip             |   xy-y    |  Drop the NOS from the stack                  |
 +-----------------+-----------+-----------------------------------------------+
 | rot             |  xyz-yzx  |  Rotate the top three values on the stack     |
@@ -274,6 +283,8 @@ Global
 | ++              |    a-     |  Increment variable by 1                      |
 +-----------------+-----------+-----------------------------------------------+
 | --              |    a-     |  Decrement variable by 1                      |
++-----------------+-----------+-----------------------------------------------+
+| HEADERS         |     -n    |  Returns number of private headers permitted  |
 +-----------------+-----------+-----------------------------------------------+
 | {{              |   ``-``   |  Start a namespace (private portion)          |
 +-----------------+-----------+-----------------------------------------------+
@@ -442,7 +453,7 @@ Global
 +-----------------+-----------+-----------------------------------------------+
 | constant        |   n"-     |  Create a numeric constant                    |
 +-----------------+-----------+-----------------------------------------------+
-| string          |   $"-     |  Create a string constant                     |
+| string:         |   $"-     |  Create a string constant                     |
 +-----------------+-----------+-----------------------------------------------+
 | allot           |    n-     |  Allocate space in the heap                   |
 +-----------------+-----------+-----------------------------------------------+
@@ -550,6 +561,10 @@ Global
 +-----------------+-----------+-----------------------------------------------+
 | later           |   ``-``   |  Defer execution of caller until a later time |
 +-----------------+-----------+-----------------------------------------------+
+| yield           |   ``-``   |  Return from a function, with execution       |
+|                 |           |  resuming from point after **yield** when the |
+|                 |           |  function is next called                      |
++-----------------+-----------+-----------------------------------------------+
 | __^             |    "-     |  Allow direct access to functions in a chain  |
 +-----------------+-----------+-----------------------------------------------+
 | needs           |    "-     |  Load a vocabulary from the *library*         |
@@ -560,16 +575,6 @@ Global
 |                 |           |  libraries.                                   |
 +-----------------+-----------+-----------------------------------------------+
 | variables|      |    "-     |  Create a series of variables                 |
-+-----------------+-----------+-----------------------------------------------+
-| pow             |   bp-n    |  Raise (b) to power (p)                       |
-+-----------------+-----------+-----------------------------------------------+
-| abs             |    n-n    |  Absoulte value of number (n)                 |
-+-----------------+-----------+-----------------------------------------------+
-| min             |   ab-c    |  Minimum of (a) or (b)                        |
-+-----------------+-----------+-----------------------------------------------+
-| max             |   ab-c    |  Maximum of (a) or (b)                        |
-+-----------------+-----------+-----------------------------------------------+
-| random          |     -x    |  Return a random number                       |
 +-----------------+-----------+-----------------------------------------------+
 
 
@@ -647,57 +652,6 @@ strings'
 
 
 ======
-files'
-======
-
-.. class:: corefunc
-
-+-----------------+-----------+-----------------------------------------------+
-| Function        | Stack     | Notes                                         |
-+=================+===========+===============================================+
-|   :R            |     -n    |  Mode for reading a file. Does not create file|
-+-----------------+-----------+-----------------------------------------------+
-|   :W            |     -n    |  Mode for writing a file                      |
-+-----------------+-----------+-----------------------------------------------+
-|   :A            |     -n    |  Mode for appending to a file                 |
-+-----------------+-----------+-----------------------------------------------+
-|   :M            |     -n    |  Mode for modifying a file. Does not create   |
-|                 |           |  file.                                        |
-+-----------------+-----------+-----------------------------------------------+
-|   open          |   $m-h    |  Open a file. Will return a handle. Valid     |
-|                 |           |  handles will be non-zero. A zero handle      |
-|                 |           |  indicates failure to open a file.            |
-+-----------------+-----------+-----------------------------------------------+
-|   read          |    h-c    |  Read a byte from a file. This returns the    |
-|                 |           |  byte.                                        |
-+-----------------+-----------+-----------------------------------------------+
-|   write         |   ch-f    |  Write a byte to a file. This returns a flag  |
-|                 |           |  indicating the number of bytes written.      |
-|                 |           |  (Should always equal '1')                    |
-+-----------------+-----------+-----------------------------------------------+
-|   close         |    h-f    |  Close an open file. Returns a flag of zero if|
-|                 |           |  unable to close, or non-zero if successful.  |
-+-----------------+-----------+-----------------------------------------------+
-|   pos           |    h-n    |  Get current position in a file               |
-+-----------------+-----------+-----------------------------------------------+
-|   seek          |   nh-f    |  Seek a position in a file                    |
-+-----------------+-----------+-----------------------------------------------+
-|   size          |    h-n    |  Return size of open file                     |
-+-----------------+-----------+-----------------------------------------------+
-|   delete        |    $-f    |  Delete a file. Returns a handle. Non-zero if |
-|                 |           |  successful, zero if failed.                  |
-+-----------------+-----------+-----------------------------------------------+
-|   slurp         |   a$-n    |  Read a file into a buffer                    |
-+-----------------+-----------+-----------------------------------------------+
-|   spew          |  an$-n    |  Write (n) bytes from address (a) into a file |
-+-----------------+-----------+-----------------------------------------------+
-|   readLine      |    h-$    |  Read a line from a file                      |
-+-----------------+-----------+-----------------------------------------------+
-|   writeLine     |   $h-     |  Write a string to a file                     |
-+-----------------+-----------+-----------------------------------------------+
-
-
-======
 types'
 ======
 
@@ -754,5 +708,3 @@ Footnotes
        apostrophe. The apostrophe will be cut, and the a suffix of
        *.rx* added. The system will attempt to load the file from the
        *library* subdirectory in the current working directory.
-
-

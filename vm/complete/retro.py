@@ -14,6 +14,7 @@ try:
 except: pass
 
 EXIT = 0x0FFFFFFF
+
 # -----------------------------------------------------------------------------
 def rxDivMod( a, b ):
   x = abs(a)
@@ -44,6 +45,7 @@ def rxGetInput( inputs ):
     a = ord(sys.stdin.read(1))
   return a
 
+
 # -----------------------------------------------------------------------------
 def rxHandleDevices( ip, stack, address, ports, memory, files, inputs ):
   ports[0] = 1
@@ -191,6 +193,10 @@ def rxHandleDevices( ip, stack, address, ports, memory, files, inputs ):
     ports[5] = 0
   elif ports[5] == -15: # console extensions
     ports[5] = -1
+  elif ports[5] == -16: # data stack max depth
+    ports[5] = 128
+  elif ports[5] == -17: # address stack max depth
+    ports[5] = 1024
 
   if ports[8] == 1:
     ports[8] = 0
@@ -209,7 +215,7 @@ def rxHandleDevices( ip, stack, address, ports, memory, files, inputs ):
 
   return ip
 
-
+
 # -----------------------------------------------------------------------------
 def process( memory, inputs ):
   ip = 0
@@ -222,9 +228,17 @@ def process( memory, inputs ):
   while ip < ext:
     opcode = memory[ip]
 
-    # If opcode is not one we know,
-    # jump past it. We have 30-opcodes.
-    if opcode <= 30:
+    # There are 31 opcodes ( 0 .. 30 ).
+    # Instructions above this range are treated as implicit calls.
+
+    if opcode > 30:
+      address.append( ip )
+      ip = memory[ip] - 1
+      while memory[ip + 1] == 0:
+        ip += 1
+
+    else:
+
       if   opcode ==  0:   # nop
         pass
 
@@ -375,17 +389,9 @@ def process( memory, inputs ):
         if ports[0] == 0:
           ip = rxHandleDevices( ip, stack, address, ports, memory, files, inputs )
 
-    else:
-      address.append( ip )
-      ip = memory[ip] - 1
-      if memory[ip + 1] == 0:
-        ip += 1
-        if memory[ip + 1] == 0:
-          ip += 1
-
     ip += 1
 
-
+
 # -----------------------------------------------------------------------------
 def run():
   cells = int(os.path.getsize('retroImage') / 4)
@@ -413,11 +419,14 @@ def run():
     t[3] = t[3] & ~(termios.ICANON | termios.ECHO | termios.ISIG)
     t[0] = 0
     termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, t)
-  try: process( memory, inputs )
-  except: pass
-  if set_termio:
-    termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, old)
-
+  try:
+    process( memory, inputs )
+  except:
+    raise
+  finally:
+    if set_termio:
+      termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, old)
+
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
   run()

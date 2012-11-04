@@ -21,6 +21,8 @@
 ( TAB     Switch between edit and command mode                                )
 ( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 
+needs files'
+
 chain: editor'
 
 {{
@@ -95,9 +97,9 @@ chain: editor'
   : ea         (  - ) @offset @#blocks 1600 * eval ;
   : run        (  - )
     active on &remap &remapKeys :is clear
-    [ display getc edit? match @active ] while ;
+    [ display getc edit? match @active ] while &remapKeys :devector ;
 ---reveal---
-  : setBlocks  ( n- ) !#blocks @memory 1600 @#blocks * - !offset new ;
+  : setBlocks  ( n- ) !#blocks here 1600 @#blocks * allot !offset new ;
   : edit ( - )
     @ch 22 >= @cw 80 >= and
     &run [ "requires an 80x22 or greater display, sorry!\n" puts ] if ;
@@ -119,8 +121,8 @@ chain: editor'
   : $$e active off  e ;
   : $$E active off ea ;
   : $$z active off    ;
-  128 setBlocks
 }}
+  128 setBlocks
 ;chain
 
 global

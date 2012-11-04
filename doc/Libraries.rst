@@ -980,14 +980,16 @@ While easy enough to do manually, this automates the process and makes it
 easily reversible.
 
 
--------
-Loading
--------
-The following should suffice:
+-----
+Usage
+-----
+After loading, add a call to the function desired to your application code.
+E.g.,
 
 ::
 
-  needs diet'
+  [ ^diet'extreme ] is boot
+
 
 
 ---------
@@ -1002,6 +1004,9 @@ Functions
 +-------------+-----------+------------------------------------------------+
 | extreme     | ``-``     | Further reductions of string length and reduces|
 |             |           | the buffers                                    |
++-------------+-----------+------------------------------------------------+
+| max         | ``-``     | Shrink as far as possible. Disables hidden     |
+|             |           | headers and temporary strings                  |
 +-------------+-----------+------------------------------------------------+
 | bloat       | ``-``     | Restore buffers and string length to the       |
 |             |           | default                                        |
@@ -1218,6 +1223,56 @@ Functions
 | inventory         | ``-``     | Display all items the player has               |
 +-------------------+-----------+------------------------------------------------+
 
+
+======
+files'
+======
+
+.. class:: corefunc
+
++-----------------+-----------+-----------------------------------------------+
+| Function        | Stack     | Notes                                         |
++=================+===========+===============================================+
+|   :R            |     -n    |  Mode for reading a file. Does not create file|
++-----------------+-----------+-----------------------------------------------+
+|   :W            |     -n    |  Mode for writing a file                      |
++-----------------+-----------+-----------------------------------------------+
+|   :A            |     -n    |  Mode for appending to a file                 |
++-----------------+-----------+-----------------------------------------------+
+|   :M            |     -n    |  Mode for modifying a file. Does not create   |
+|                 |           |  file.                                        |
++-----------------+-----------+-----------------------------------------------+
+|   open          |   $m-h    |  Open a file. Will return a handle. Valid     |
+|                 |           |  handles will be non-zero. A zero handle      |
+|                 |           |  indicates failure to open a file.            |
++-----------------+-----------+-----------------------------------------------+
+|   read          |    h-c    |  Read a byte from a file. This returns the    |
+|                 |           |  byte.                                        |
++-----------------+-----------+-----------------------------------------------+
+|   write         |   ch-f    |  Write a byte to a file. This returns a flag  |
+|                 |           |  indicating the number of bytes written.      |
+|                 |           |  (Should always equal '1')                    |
++-----------------+-----------+-----------------------------------------------+
+|   close         |    h-f    |  Close an open file. Returns a flag of zero if|
+|                 |           |  unable to close, or non-zero if successful.  |
++-----------------+-----------+-----------------------------------------------+
+|   pos           |    h-n    |  Get current position in a file               |
++-----------------+-----------+-----------------------------------------------+
+|   seek          |   nh-f    |  Seek a position in a file                    |
++-----------------+-----------+-----------------------------------------------+
+|   size          |    h-n    |  Return size of open file                     |
++-----------------+-----------+-----------------------------------------------+
+|   delete        |    $-f    |  Delete a file. Returns a handle. Non-zero if |
+|                 |           |  successful, zero if failed.                  |
++-----------------+-----------+-----------------------------------------------+
+|   slurp         |   a$-n    |  Read a file into a buffer                    |
++-----------------+-----------+-----------------------------------------------+
+|   spew          |  an$-n    |  Write (n) bytes from address (a) into a file |
++-----------------+-----------+-----------------------------------------------+
+|   readLine      |    h-$    |  Read a line from a file                      |
++-----------------+-----------+-----------------------------------------------+
+|   writeLine     |   $h-     |  Write a string to a file                     |
++-----------------+-----------+-----------------------------------------------+
 
 ======
 forth'
@@ -1469,6 +1524,28 @@ Overview
 --------
 This vocabulary provides functions for examining functions and data structures.
 
+---------
+Functions
+---------
+
++------------------+-------+----------------------------------------------------+
+| Function         | Stack | Usage                                              |
++==================+=======+====================================================+
+| isRevectorable?  | a-f   | Returns -1 if a function can be revectored, or 0   |
+|                  |       | if not.                                            |
++------------------+-------+----------------------------------------------------+
+| isVisible?       | a-f   | Returns -1 if a function is visible in the current |
+|                  |       | dictionary, or 0 if not                            |
++------------------+-------+----------------------------------------------------+
+| getClass         | a-a   | Return the class of a function, or 0 if not found  |
++------------------+-------+----------------------------------------------------+
+| startOfBuffers   | -a    | Address where system buffers begin                 |
++------------------+-------+----------------------------------------------------+
+| reserved         | -n    | Amount of memory used for buffers                  |
++------------------+-------+----------------------------------------------------+
+| freeSpace        | -n    | Amount of free space (between **here** and         |
+|                  |       | **startOfBuffers**                                 |
++------------------+-------+----------------------------------------------------+
 
 ===========
 linkedList'
@@ -1552,58 +1629,6 @@ Functions
 |              |       | starts at *1*.                                |
 +--------------+-------+-----------------------------------------------+
 
-=======
-locals'
-=======
-
---------
-Overview
---------
-This vocabulary provides an easy way to give functions access to local variables within
-certain limitations.
-
-* Variable names are limited to twelve characters
-* Functions using local variables are not reentrant
-
-
--------
-Example
--------
-::
-
-  : foo ( nos tos - result )  locals{ tos nos }  @nos @tos + @nos * ;
-
-Note here that **locals{** will modify the temporary variable names to match the names
-you specify.
-
-
----------
-Functions
----------
-+---------+-----------------+----------------------+-------------------------------------+
-| Name    | Stack (Runtime) | Stack (Compile-Time) | Usage                               |
-+=========+=================+======================+=====================================+
-| locals{ | ``-``           | -a                   | Parse for and setup local variables.|
-|         |                 |                      | The parsing ends when **}** is      |
-|         |                 |                      | found. Local variables are created  |
-|         |                 |                      | and initialized in reverse order of |
-|         |                 |                      | stack comments.                     |
-+---------+-----------------+----------------------+-------------------------------------+
-| a       | -a              | a-a                  | First local variable                |
-+---------+-----------------+----------------------+-------------------------------------+
-| b       | -a              | a-a                  | Second local variable               |
-+---------+-----------------+----------------------+-------------------------------------+
-| c       | -a              | a-a                  | Third local variable                |
-+---------+-----------------+----------------------+-------------------------------------+
-| d       | -a              | a-a                  | Fourth local variable               |
-+---------+-----------------+----------------------+-------------------------------------+
-| e       | -a              | a-a                  | Fifth local variable                |
-+---------+-----------------+----------------------+-------------------------------------+
-| f       | -a              | a-a                  | Sixth local variable                |
-+---------+-----------------+----------------------+-------------------------------------+
-
-The initial variable names will be replaced by **locals{** each time it is used.
-
 =====
 math'
 =====
@@ -1633,6 +1658,17 @@ Functions
 | odd?       | n-f   | Returns a flag indicating whether or not a number is|
 |            |       | false                                               |
 +------------+-------+-----------------------------------------------------+
+| pow        | bp-n  |  Raise (b) to power (p)                             |
++------------+-------+-----------------------------------------------------+
+| abs        |  n-n  |  Absoulte value of number (n)                       |
++------------+-------+-----------------------------------------------------+
+| min        | ab-c  |  Minimum of (a) or (b)                              |
++------------+-------+-----------------------------------------------------+
+| max        | ab-c  |  Maximum of (a) or (b)                              |
++------------+-------+-----------------------------------------------------+
+| random     |   -x  |  Return a random number                             |
++------------+-------+-----------------------------------------------------+
+
 
 ========
 queries'

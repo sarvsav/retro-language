@@ -38,7 +38,7 @@ here [ !target ] [ !origin ] bi IMAGE-SIZE allot
 : __#         ( $-  ) lit, toNumber m, ; parsing
 : $,          ( $-  ) withLength [ @+ m, ] times 0 m, drop ;
 : shrink      (  -  ) t-here "\nShrinking kernel to %d cells\n" puts
-                      t-here @origin 6 + ! t-here 256 + @origin 3 + ! ;
+                      t-here @origin 6 + ! t-here @origin 3 + ! ;
 
 ( Metacompiler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 : t: ( "- ) label: nop, nop, &m, reclass ;
@@ -61,7 +61,7 @@ here [ !target ] [ !origin ] bi IMAGE-SIZE allot
 : variable: ( n"- ) label: m, ;
 : variable  (  "- ) 0 variable: ;
 : elements  ( n"- ) &variable times ;
-: entry     ( a"- ) t-here @link m, !link m, m, getToken $, ;
+: entry     ( a"- ) t-here @link m, !link m, m, 0 m, getToken $, ;
 : word:     ( a"- ) @'WORD  entry ;
 : macro:    ( a"- ) @'MACRO entry ;
 : data:     ( a"- ) @'DATA  entry ;

@@ -397,6 +397,10 @@ void rxDeviceHandler(VM *vm) {
                   break;
         case -15: vm->ports[5] = -1;
                   break;
+        case -16: vm->ports[5] = STACK_DEPTH;
+                  break;
+        case -17: vm->ports[5] = ADDRESSES;
+                  break;
         default:  vm->ports[5] = 0;
       }
     }
@@ -480,26 +484,18 @@ void rxProcessOpcode(VM *vm) {
     case VM_JUMP:
          IP++;
          IP = vm->image[IP] - 1;
-         if (IP < 0)
-           IP = IMAGE_SIZE;
-         else {
-           if (vm->image[IP+1] == 0)
-             IP++;
-           if (vm->image[IP+1] == 0)
-             IP++;
-         }
+         if (vm->image[IP+1] == 0)
+           IP++;
+         if (vm->image[IP+1] == 0)
+           IP++;
          break;
     case VM_RETURN:
          IP = TORS;
          RSP--;
-         if (IP < 0)
-           IP = IMAGE_SIZE;
-         else {
-           if (vm->image[IP+1] == 0)
-             IP++;
-           if (vm->image[IP+1] == 0)
-             IP++;
-         }
+         if (vm->image[IP+1] == 0)
+           IP++;
+         if (vm->image[IP+1] == 0)
+           IP++;
          break;
     case VM_GT_JUMP:
          IP++;
@@ -598,7 +594,6 @@ void rxProcessOpcode(VM *vm) {
          vm->ports[a] = 0;
          break;
     case VM_OUT:
-         vm->ports[0] = 0;
          vm->ports[TOS] = NOS;
          DROP DROP
          break;
@@ -610,14 +605,11 @@ void rxProcessOpcode(VM *vm) {
          TORS = IP;
          IP = vm->image[IP] - 1;
 
-         if (IP < 0)
-           IP = IMAGE_SIZE;
-         else {
-           if (vm->image[IP+1] == 0)
-             IP++;
-           if (vm->image[IP+1] == 0)
-             IP++;
-         }
+         if (vm->image[IP+1] == 0)
+           IP++;
+         if (vm->image[IP+1] == 0)
+           IP++;
+
          if (vm->max_rsp < RSP)
            vm->max_rsp = RSP;
          break;

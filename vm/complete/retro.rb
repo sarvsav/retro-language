@@ -22,7 +22,7 @@ class Stack
     if @offset < 0
       puts "Error: stack underflow"
       false
-    else 
+    else
       @contents[@offset]
     end
   end
@@ -42,7 +42,7 @@ class Stack
   end
   def depth
     @offset + 1
-  end 
+  end
   def swap
     x = self.pop ; y = self.pop
     self.push(x) ; self.push(y)
@@ -229,6 +229,8 @@ def handle_devices()
               when -13 then 32     # bits per cell
               when -14 then 0      # endian
               when -15 then 1      # console support
+              when -16 then 128    # data stack max depth
+              when -17 then 1024   # address stack max depth
               end
 
   case @ports[8]

@@ -11,7 +11,7 @@ Ngaro VM Implementation Status
 +------------+--------------+---+---+---+---+---+---+---+---+
 | C          | libretro.c   | x | x | x | x | x | x | x | x |
 +------------+--------------+---+---+---+---+---+---+---+---+
-| C#         | retro.cs     | x | x |   | x | X | x | x |   |
+| C#         | retro.cs     | x | x | x | x | X | x | x | x |
 +------------+--------------+---+---+---+---+---+---+---+---+
 | F#         | retro.fsx    | x | x | x | x | x | x | x | x |
 +------------+--------------+---+---+---+---+---+---+---+---+
@@ -71,7 +71,7 @@ The C implementation is the oldest and most flexible of the VM
 implementations. It is feature complete, can track opcode
 and stack usage, and serves as the reference implementation.
 
-Thiis implementation can be built for 16-bit, 32-bit, or 64-bit
+This implementation can be built for 16-bit, 32-bit, or 64-bit
 cell sizes in little or big endian. The default settings are for
 a standard little endian, 32-bit image.
 

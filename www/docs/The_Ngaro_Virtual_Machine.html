@@ -99,8 +99,9 @@ may provide non-standard devices on port numbers above or below this range.</p>
 </table>
 <div class="section" id="port-0-wait-for-hardware-event">
 <h2>Port 0: Wait for Hardware Event</h2>
-<p>This is used to determine if Ngaro should enter a wait for hardware event
-loop. It should be set to 0, then use the WAIT instruction.</p>
+<p>This port is used to synchronize communication between the ngaro and
+the virtual hardware devices.</p>
+<p>See the description of the WAIT opcode for details.</p>
 <p>Usage Example:</p>
 <pre class="literal-block">
 #0 #0 out, wait,
@@ -309,6 +310,12 @@ the deletion fails.</p>
 </tr>
 <tr><td>-15</td>
 <td>-1 if Port 8 enabled, 0 if disabled</td>
+</tr>
+<tr><td>-16</td>
+<td>Return max depth of data stack</td>
+</tr>
+<tr><td>-17</td>
+<td>Return max depth of address stack</td>
 </tr>
 </tbody>
 </table>
@@ -2106,10 +2113,12 @@ and the second will be a value. Store the value in the I/O port specified.</p>
 </div>
 <div class="section" id="opcode-30-wait">
 <h3>Opcode 30: WAIT</h3>
-<p>Run the simulated device handler. Before calling this, the code being run should
-set I/O port 0 to 0 to ensure that a request is actually handled. If no requests
-are pending (based on the values written to the ports previously), continue
-execution as normal.</p>
+<p>Run the simulated device handler, provided that port 0 is set to 0,
+and at least one other port is set to a value other than 0. Otherwise,
+continue execution as normal.</p>
+<p>If the device handler runs, it will setting port 0 to 1, thus preventing
+itself from running again until the code sets port 0 back to 0. Therefore,
+programs should always set I/O port 0 to 0 before invoking WAIT.</p>
 </div>
 <div class="section" id="opcodes-above-30">
 <h3>Opcodes Above 30</h3>

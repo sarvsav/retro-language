@@ -13,10 +13,10 @@ chain: bad'
     255 swap 8 * dup [ << and ] dip >> ;
 
   : replace
-    [ 0 = ] [ [ [ [ drop @byte ] dip ] dip ] dip ] whend
-    [ 1 = ] [ [ [ drop @byte ] dip ] dip ] whend
-    [ 2 = ] [ [ drop @byte ] dip ] whend
-    [ 3 = ] [ drop @byte ] whend
+    [ 0 == ] [ [ [ [ drop @byte ] dip ] dip ] dip ] whend
+    [ 1 == ] [ [ [ drop @byte ] dip ] dip ] whend
+    [ 2 == ] [ [ drop @byte ] dip ] whend
+    [ 3 == ] [ drop @byte ] whend
     drop ;
 ---reveal---
   : unpack ( c-bbbb )
