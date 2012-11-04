@@ -1,8 +1,0 @@
-chain: docstrings'
-  : describe   ( string:documentation string:name - )
-    find drop [ keepString ] dip !d->doc ;
-
-  : help  ( string:name - )
-    find drop @d->doc 0; cr puts cr ;
-;chain
-

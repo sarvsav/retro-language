@@ -1,7 +1,0 @@
-
-variable localStack
-
-: LSP @localStack ;
-: LPush @LSP 1+ !LSP LSP @LSP + ! ; 
-: LPop  LSP @LSP + @ @LSP 1- !LSP ;
-: newCoroutine here 6 allot swap curry dup dip ;

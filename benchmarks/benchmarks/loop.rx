@@ -1,3 +1,0 @@
-: bar 100 [ 100 [ 1000 [ ] times ] times ] times bye ;
-&bar is boot
-save bye
