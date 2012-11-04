@@ -29,15 +29,11 @@ global
 : testedWith:
   getToken drop passed ++ ;
 
-: pause 31 , ; immediate
-
 : results
   @failed @passed @tested "\nTested: %s\n  %d passed, %d failed" puts
-  @failed 0 <> [ pause ] ifTrue
   @passed @failed + +total
   @failed +tfailed
   @passed +tpassed ;
-
 ( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 needs files'
 with files'
@@ -59,8 +55,7 @@ TEST: :A
 results
 
 TEST: :M
-  [ "file4.test" :M open dup "result:" puts putn
-   dup !fid 0 = dup "test:" puts putn ] expected: { -1 }
+  [ "file4.test" :M open dup !fid 0 = ] expected: { -1 }
 results
 
 TEST: open

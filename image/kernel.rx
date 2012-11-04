@@ -22,7 +22,7 @@ variable which        ( Pointer to dictionary header of the most recently     )
 
 label: copytag   "Retro" $,
 label: version   "11.5" $,
-label: build     "2012.10.30" $,
+label: build     "2012.11.02" $,
 label: okmsg     "ok  " $,
 
 t: ,           ( n-  ) heap # @, dup, 1+, push, !, pop, heap # !, ;
@@ -226,11 +226,11 @@ i: ws
    tabAsWhitespace # @, 0; drop, dup, 9 # =if drop, 32 # then ;
 ( [ c-c ] internal helper for remapping whitespace )
 
-i: <getc> 1 # 1 # out, wait 1 # in, ;
-( [ -c ] internal helper for reading keypresses )
-
-w: getc getc repeat <getc> remapKeys dup, 0 # !if ws ; then drop, again ;
+w: getc:unfiltered getc:unfiltered 1 # 1 # out, wait 1 # in, ;
 "( -c ) Read a keypress and return the ASCII value on the stack" :doc
+
+w: getc getc repeat getc:unfiltered remapKeys dup, 0 # !if ws ; then drop, again ;
+"( -c ) Read a keypress and return the ASCII value on the stack.\nThis differs from **getc:unfiltered** in that the key value is processed\nby **remapKeys** before being returned." :doc
 
 i: putc? dup, 8 # =if drop, break # @, ; then dup, putc ;
 ( [ c-c ] helper to display characters and backspaces properly )
@@ -252,7 +252,7 @@ i: (accept)
      swap, !+
    again ;
 ( [ a-a ] internal implementation of **accept** )
-   
+
 w: accept accept break # !, tib eat (accept) 0 # swap, !+ drop, ;
 "( c- ) Read a string, ending with the specified character. The string is returned in **tib**" :doc
 
@@ -290,8 +290,7 @@ m: [[ [[ compiler # off ;
 w: ]] ]] compiler # on ;
 "( - ) Turn compiler on" :doc
 
-w: vector? vector?  vector # @, 0; drop, 0 # , 0 # , ;
-"( - ) NEEDS-DESCRIPTION" :doc
+i: vector?  vector # @, 0; drop, 0 # , 0 # , ;
 
 w: : :   create ' .word # last # @, d->class !, ]] vector? ;
 "( ``- ) Calls **create**, changes class to **.word**, and turns **compiler** on." :doc
@@ -873,7 +872,7 @@ here
     [ 2  ( STRING ) == ] [ &withLength dip buffer ] whend
     [ 3  ( LIST   ) == ] &list                      whend
     <each@> ;
-  " ( ...t- ) DOCUMENTATION-NEEDED" :doc
+  " ( ...t- ) Supercombinator for applying a quote to each item in various data structures.\nProvide one of the following stack forms:\n\n    ARRAY:  aq-\n    BUFFER: anq-\n    STRING: $q-\n    LIST: lq-\n\nFor LIST, *l* should be a variable pointing to the list.\n\nThe quote will be given the address of the current element with each time it is invoked by each@." :doc
 }}
 
 ( Memory Blocks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
@@ -1224,6 +1223,7 @@ chain: internals'
   &string create string @last !d->xt &.word reclass
   "( -a ) Helper function for strings" :doc
 ;chain
+"( - ) vocabulary containing functions used internally by Retro" :doc
 
 hide string
 hide quote
@@ -1257,6 +1257,7 @@ chain: buffer'
   "( a- ) Set buffer to memory address and empty it" :doc
 }}
 ;chain
+"( - ) vocabulary for dealing with LIFO buffers" :doc
 
 ( Text Strings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 with buffer'
@@ -1342,6 +1343,7 @@ chain: strings'
   "( $``-$$ ) Parse for a character and call **splitAtChar**" :doc
 ;chain
 without
+"( - ) vocabulary with functions for dealing with strings" :doc
 
 ( Access Words Within Chains Directly ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
 with strings'
@@ -1376,10 +1378,12 @@ chain: types'
   3 constant LIST   ( -n )
   "( -n ) Type constant for linked lists" :doc
 ;chain
-
+"( - ) vocabulary with constants for data types. Used with **each@**" :doc
 
 : describe
-  d' 0; dup d->doc @ swap d->class @ xt->d d->name "\nclass: %s\n%s\n" puts ;
+  d' 0; cr
+  dup d->class @ xt->d dup [ d->name ] [ drop "unknown" ] if "class: %s\n" puts
+      d->doc @ dup [ ] [ drop "no documentation provided" ] if puts cr ;
 "( ``- ) provide information about a function" :doc
 
 ( cleanup and save ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )

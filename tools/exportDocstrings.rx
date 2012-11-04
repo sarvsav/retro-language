@@ -1,3 +1,5 @@
+needs help'
+
 [ "<link href='http://kevinburke.bitbucket.org/markdowncss/markdown.css' rel='stylesheet'></link>\n" puts
   [ dup '< == [ drop "&lt;" puts ] [ dup '> == [ drop "&gt;" puts ] [ default: putc ] if ] if ] &putc :is
   global

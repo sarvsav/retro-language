@@ -28,7 +28,7 @@ image: retro
 helpful: image
 	./retro --image retroImage --with image/helpful.rx
 
-docstrings: helpful
+docstrings:
 	cp retroImage helpImage
 	./retro --image helpImage --with tools/exportDocstrings.rx
 	./retro --image helpImage >doc/Function_List.md

@@ -64,7 +64,7 @@ def rxHandleDevices( ip, stack, address, ports, memory, files, inputs ):
         sys.stdout.write(chr(8))
       else:
         sys.stdout.write(chr(stack.pop()))
-    else:
+    else:        
       sys.stdout.write("\033[2J\033[1;1H")
       stack.pop()
     sys.stdout.flush()
