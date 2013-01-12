@@ -125,13 +125,15 @@ if not INT32_FMT:
 def save_image( ints, path ):
   """
   write a list of ints as 32-bit binary values
+
+  returns size of the image
   """
   assert len( ints ), "no instructions given"
   arr = array.array( INT32_FMT, ints )
   img = open( path, 'wb' )
   arr.tofile( img )
   img.close( )
-
+  return len( ints )
 
 
 # show control codes
@@ -164,7 +166,7 @@ def run( src, imgpath = NGARO_IMG ):
   see module docstring at top of file for dump format
   """
 
-  save_image( assemble( src ), imgpath )
+  imgsize = save_image( assemble( src ), imgpath )
 
   cmd = "%s --dump --image %s" % ( NGARO_CMD, imgpath )
   sp = subprocess # module
@@ -181,7 +183,7 @@ def run( src, imgpath = NGARO_IMG ):
   class res : pass
   res.data = map( int, data.split( ))
   res.addr = map( int, addr.split( ))
-  res.ram = map( int, ram.split( ))
+  res.ram = map( int, ram.split( )[:imgsize])
   res.out = rest
   return res
 
@@ -267,7 +269,7 @@ class NgaroTests( unittest.TestCase ):
     self.assertEquals( [ 3, 2, 1 ], vm.addr )
 
 
-  def test_gosub( self ): # opcodes above 30
+  def TEST_GOSUB( self ): # opcodes above 30
     vm = run(" sub " + self.nops( 32 ) +  ":sub 1 2", "gosub.img" )
     self.assertEquals([ 1, 2 ], vm.data)
     self.assertEquals([ 0 ], vm.addr )

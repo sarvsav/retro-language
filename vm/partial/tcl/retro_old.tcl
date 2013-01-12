@@ -23,6 +23,7 @@ proc pop {name} {
 }
 
 # Variables
+set flag 0	        ;# CmdLine flag
 set ip 0                ;# instruction pointer
 set sp 0                ;# stack pointer
 set rp 0                ;# return pointer
@@ -251,25 +252,60 @@ proc rxInitialize {} {
   }
 }
 
+proc cmdline {dflag} { 
+  upvar #0 $dflag flag 
+  for {set i 0} {$i < [llength $::argv]} {incr i} { 
+    switch -exact -- [lindex $::argv $i] { 
+      --dump  { set flag 1 } 
+      --image {
+                incr i 
+                if {[file exist [lindex $::argv $i]]} {
+                    set f [open [lindex $::argv $i] r]
+                } else { error "tclsh retro.tcl ?--dump? --image <imagename>" }
+              }
+    }
+  }
+    if {[info exist f]} { return $f } else { return 0 }  
+}
+
 proc rxLoadImage {} {
-  global memory
-  set i 0 
-  set fp [open retroImage r]
+  global memory 
+  set i 0
+  set fp [cmdline flag]
+  if {$fp == 0} {error "Program failed due to bad arguments!"}  	
   fconfigure $fp -translation binary 
   while {![eof $fp]} {
     binary scan [read $fp 4] i d 
     lset memory $i [expr {int($d)}]
     incr i 
   }
-  close $fp 
+  close $fp   
+}
+
+# Run this function if --dump is used a the cli 
+proc dumpState {} {
+  global stack address memory sp rp
+  puts stdout [format %c 28] 
+  puts stdout [lrange $stack 0 [expr $sp - 1]] 
+  puts stdout [format %c 29] 	
+  puts stdout [lrange $address 0 [expr $rp - 1]]
+  puts stdout [format %c 29] 
+  puts stdout $memory
 }
 
 proc rxMain {} { 
-  global ip 
+  global ip flag 
   rxInitialize
   rxLoadImage 
-  while {$ip < 1000000} { 
-    rxProcessOpcode; incr ip 
+  if {$flag} { 
+    dumpState 
+    while {$ip < 1000000} { 
+     rxProcessOpcode; incr ip
+    }
+  } else { 
+   while {$ip < 1000000} { 
+     rxProcessOpcode; incr ip 
+   }
   }
 }
 
